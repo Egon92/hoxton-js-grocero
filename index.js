@@ -11,10 +11,8 @@ This is how an item object should look like
 */
 
 
-
+const cartUl = document.querySelector("#cart .item-list")
 const totalSum = document.querySelector(".total-number")
-
-
 
 const state = {
     groceries: [
@@ -79,14 +77,21 @@ const state = {
             amount: 0
         }
     ],
+
+    cartGroceries: []
 }
 
-// function addToCart(grocery){
-//     state.groceries.filter(function (addGroceriesToCart){
-//      return addGroceriesToCart.name === grocery.name
-//     })
-//   }
-
+function addToCart(grocery){
+    for(let cartGrocery of state.cartGroceries){
+        if(grocery.name===cartGrocery.name){
+          cartGrocery.amount++
+          return false
+        }
+    }
+    state.cartGroceries.push(grocery)
+    grocery.amount ++
+}
+ 
 // create store grocery
 
 function createStoreGrocery(){
@@ -108,7 +113,7 @@ storeButton.textContent = "Add to cart"
 
 storeButton.addEventListener("click", function(){
     addToCart(grocery)
-    render()
+    renderCardGroceries()
 })
 
 storeDiv.append(storeImg)
@@ -116,21 +121,19 @@ storeUl.append(storeLi)
 storeLi.append(storeDiv, storeButton)
 }
 }
-createStoreGrocery()
-
 
 // create cart grocery
 
-function createCartGrocery(){
-
-const cartUl = document.querySelecton("#cart .item-list")
+function createCartGrocery(grocery){
 
 const cartLi = document.createElement("li")
 
 const cartImg = document.createElement("img")
 cartImg.setAttribute("class","cart--item-icon")
+cartImg.setAttribute(`src`,`assets/icons/${grocery.id<10?'00':'0'}${grocery.id}-${grocery.name}.svg`)
 
 const cartGroceryName = document.createElement("p")
+cartGroceryName.textContent = grocery.name
 
 const removeButton = document.createElement("button")
 removeButton.setAttribute("class","quantity-btn remove-btn center")
@@ -138,7 +141,7 @@ removeButton.textContent = "-"
 
 const span = document.createElement("span")
 span.setAttribute("class","quantity-text center")
-span.textContent = "1"
+span.textContent = grocery.amount
 
 const addButton = document.createElement("button")
 addButton.setAttribute("class","quantity-btn add-btn center")
@@ -146,16 +149,40 @@ addButton.textContent = "+"
 
 cartUl.append(cartLi)
 cartLi.append(cartImg, cartGroceryName, removeButton, span, addButton)
-}
-createCartGrocery()
-// const groceries = state.groceries
 
-// for(const grocery of groceries){    
-//     
-//     
-// }
+removeButton.addEventListener("click", function(){
+    reduceGroceryAmount(grocery)
+    renderCardGroceries()
+})
+
+addButton.addEventListener("click", function(){
+    addGroceryAmount(grocery)
+    renderCardGroceries()
+})
+}
+
+function reduceGroceryAmount(grocery){
+    grocery.amount--
+    if (grocery.amount === 0) {
+        state.cartGroceries.splice(state.cartGroceries.indexOf(grocery),1)
+    }
+}
+
+function addGroceryAmount(grocery){
+    grocery.amount++
+}
+
+function renderCardGroceries() {
+    cartUl.innerHTML = ""
+    for (const grocery of state.cartGroceries){
+            createCartGrocery(grocery)
+            console.log(grocery)
+    }
+}
 
 function render(){
-
+    createStoreGrocery()
+    createCartGrocery()
 }
 render()
+
