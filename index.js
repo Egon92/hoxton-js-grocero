@@ -13,6 +13,7 @@ This is how an item object should look like
 
 const cartUl = document.querySelector("#cart .item-list")
 const totalSum = document.querySelector(".total-number")
+    
 
 const state = {
     groceries: [
@@ -174,15 +175,22 @@ function addGroceryAmount(grocery){
 
 function renderCardGroceries() {
     cartUl.innerHTML = ""
+    let totalprice = 0
+    
     for (const grocery of state.cartGroceries){
             createCartGrocery(grocery)
-            console.log(grocery)
+            totalprice += grocery.price*grocery.amount
     }
+        totalSum.textContent = totalprice.toFixed(2)
+        console.log(totalprice)
 }
+
+
 
 function render(){
     createStoreGrocery()
     createCartGrocery()
 }
 render()
+
 
