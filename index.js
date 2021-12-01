@@ -10,7 +10,6 @@ This is how an item object should look like
 
 */
 
-
 const cartUl = document.querySelector("#cart .item-list")
 const totalSum = document.querySelector(".total-number")
     
@@ -184,8 +183,6 @@ function renderCardGroceries() {
         totalSum.textContent = totalprice.toFixed(2)
         console.log(totalprice)
 }
-
-
 
 function render(){
     createStoreGrocery()
