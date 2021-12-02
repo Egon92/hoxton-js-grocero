@@ -1,18 +1,5 @@
-/*
-
-This is how an item object should look like
-
-{
-  id: 1, // <- the item id matches the icon name in the assets/icons folder
-  name: "beetroot",
-  price: 0.35 // <- You can come up with your own prices
-}
-
-*/
-
 const cartUl = document.querySelector("#cart .item-list")
 const totalSum = document.querySelector(".total-number")
-    
 
 const state = {
     groceries: [
@@ -38,7 +25,7 @@ const state = {
             id: 4,
             name: "appricot",
             price: 0.25,
-            amount:0
+            amount: 0
         },
         {
             id: 5,
@@ -81,113 +68,115 @@ const state = {
     cartGroceries: []
 }
 
-function addToCart(grocery){
-    for(let cartGrocery of state.cartGroceries){
-        if(grocery.name===cartGrocery.name){
-          cartGrocery.amount++
-          return false
+function addToCart(grocery) {
+    for (let cartGrocery of state.cartGroceries) {
+        if (grocery.name === cartGrocery.name) {
+            cartGrocery.amount++
+            return false
         }
     }
     state.cartGroceries.push(grocery)
-    grocery.amount ++
+    grocery.amount++
 }
- 
+
+function reduceGroceryAmount(grocery) {
+    grocery.amount--
+    if (grocery.amount === 0) {
+        state.cartGroceries.splice(state.cartGroceries.indexOf(grocery), 1)
+    }
+}
+
+function addGroceryAmount(grocery) {
+    grocery.amount++
+}
+
 // create store grocery
 
-function createStoreGrocery(){
+function createStoreGrocery() {
 
-const storeUl = document.querySelector("header .item-list")
+    const storeUl = document.querySelector("header .item-list")
+    storeUl.innerHTML = ""
 
-for (const grocery of state.groceries){
+    for (const grocery of state.groceries) {
 
-const storeLi = document.createElement("li")
+        const storeLi = document.createElement("li")
 
-const storeDiv = document.createElement("div")
-storeDiv.setAttribute("class",".store--item-icon")
+        const storeDiv = document.createElement("div")
+        storeDiv.setAttribute("class", ".store--item-icon")
 
-const storeImg = document.createElement("img")
-storeImg.setAttribute(`src`,`assets/icons/${grocery.id<10?'00':'0'}${grocery.id}-${grocery.name}.svg`)
-  
-const storeButton = document.createElement("button")
-storeButton.textContent = "Add to cart"
+        const storeImg = document.createElement("img")
+        storeImg.setAttribute(`src`, `assets/icons/${grocery.id < 10 ? '00' : '0'}${grocery.id}-${grocery.name}.svg`)
 
-storeButton.addEventListener("click", function(){
-    addToCart(grocery)
-    renderCardGroceries()
-})
+        const storeButton = document.createElement("button")
+        storeButton.textContent = "Add to cart"
 
-storeDiv.append(storeImg)
-storeUl.append(storeLi)
-storeLi.append(storeDiv, storeButton)
-}
+        storeButton.addEventListener("click", function () {
+            addToCart(grocery)
+            render()
+        })
+
+        storeDiv.append(storeImg)
+        storeUl.append(storeLi)
+        storeLi.append(storeDiv, storeButton)
+    }
 }
 
 // create cart grocery
 
-function createCartGrocery(grocery){
+function createCartGrocery(grocery) {
 
-const cartLi = document.createElement("li")
+    const cartLi = document.createElement("li")
 
-const cartImg = document.createElement("img")
-cartImg.setAttribute("class","cart--item-icon")
-cartImg.setAttribute(`src`,`assets/icons/${grocery.id<10?'00':'0'}${grocery.id}-${grocery.name}.svg`)
+    const cartImg = document.createElement("img")
+    cartImg.setAttribute("class", "cart--item-icon")
+    cartImg.setAttribute(`src`, `assets/icons/${grocery.id < 10 ? '00' : '0'}${grocery.id}-${grocery.name}.svg`)
 
-const cartGroceryName = document.createElement("p")
-cartGroceryName.textContent = grocery.name
+    const cartGroceryName = document.createElement("p")
+    cartGroceryName.textContent = grocery.name
 
-const removeButton = document.createElement("button")
-removeButton.setAttribute("class","quantity-btn remove-btn center")
-removeButton.textContent = "-"
+    const removeButton = document.createElement("button")
+    removeButton.setAttribute("class", "quantity-btn remove-btn center")
+    removeButton.textContent = "-"
 
-const span = document.createElement("span")
-span.setAttribute("class","quantity-text center")
-span.textContent = grocery.amount
+    const span = document.createElement("span")
+    span.setAttribute("class", "quantity-text center")
+    span.textContent = grocery.amount
 
-const addButton = document.createElement("button")
-addButton.setAttribute("class","quantity-btn add-btn center")
-addButton.textContent = "+"
+    const addButton = document.createElement("button")
+    addButton.setAttribute("class", "quantity-btn add-btn center")
+    addButton.textContent = "+"
 
-cartUl.append(cartLi)
-cartLi.append(cartImg, cartGroceryName, removeButton, span, addButton)
+    cartUl.append(cartLi)
+    cartLi.append(cartImg, cartGroceryName, removeButton, span, addButton)
 
-removeButton.addEventListener("click", function(){
-    reduceGroceryAmount(grocery)
-    renderCardGroceries()
-})
+    removeButton.addEventListener("click", function () {
+        reduceGroceryAmount(grocery)
+        render()
+    })
 
-addButton.addEventListener("click", function(){
-    addGroceryAmount(grocery)
-    renderCardGroceries()
-})
-}
-
-function reduceGroceryAmount(grocery){
-    grocery.amount--
-    if (grocery.amount === 0) {
-        state.cartGroceries.splice(state.cartGroceries.indexOf(grocery),1)
-    }
-}
-
-function addGroceryAmount(grocery){
-    grocery.amount++
+    addButton.addEventListener("click", function () {
+        addGroceryAmount(grocery)
+        render()
+    })
 }
 
 function renderCardGroceries() {
+
     cartUl.innerHTML = ""
     let totalprice = 0
-    
-    for (const grocery of state.cartGroceries){
-            createCartGrocery(grocery)
-            totalprice += grocery.price*grocery.amount
+
+    for (const grocery of state.cartGroceries) {
+        createCartGrocery(grocery)
+        totalprice += grocery.price * grocery.amount
     }
-        totalSum.textContent = totalprice.toFixed(2)
-        console.log(totalprice)
+    totalSum.textContent = totalprice.toFixed(2)
+    console.log(totalprice)
 }
 
-function render(){
+// render function
+function render() {
     createStoreGrocery()
-    createCartGrocery()
+    renderCardGroceries()
 }
 render()
-
 
